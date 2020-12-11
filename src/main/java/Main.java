@@ -44,21 +44,23 @@ public class Main {
         printResultSet(rsSelect);
 
         System.out.println("|*** c ***|");
-        selectST = conn.prepareStatement("SELECT avg(fiber)" +
+        selectST = conn.prepareStatement(
+                "SELECT" +
+                " (SELECT avg(fiber)" +
                 " from chocolates" +
-                " where chocolate_type='Dark'");
+                " where chocolate_type = 'Dark')," +
+                " (SELECT avg(fiber)" +
+                " from chocolates" +
+                " where chocolate_type = 'Milk')");
         rsSelect = selectST.executeQuery();
-        double dark_fiber=0;
-        if (rsSelect.next())
-        dark_fiber=rsSelect.getDouble(1);
 
-        selectST = conn.prepareStatement("SELECT avg(fiber)" +
-                " from chocolates" +
-                " where chocolate_type='Milk'");
-        rsSelect = selectST.executeQuery();
-        double milk_fiber=0;
-        if (rsSelect.next())
-            milk_fiber=rsSelect.getDouble(1);
+        double dark_fiber = 0;
+        double milk_fiber = 0;
+
+        if (rsSelect.next()) {
+            dark_fiber = rsSelect.getDouble(1);
+            milk_fiber = rsSelect.getDouble(2);
+        }
 
         System.out.println("Mleczna czekolada zawiera średnio "+milk_fiber+" g błonnika na 100g, a gorzka "
         + dark_fiber+" g błonnika na 100g");
